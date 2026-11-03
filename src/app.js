@@ -1,24 +1,35 @@
+require("dotenv").config();
 const express = require("express");
+const connectDB = require("./config/database");
+const User = require("./models/user");
 
 const app = express();
 
-app.get("/user/:userId/:name", (req, res) => {
-  console.log(req.params);
-  res.send("Get API call");
+app.post("/signup", async (req, res) => {
+  const userObj = {
+    firstName: "Prerna",
+    lastName: "Malhotra",
+    email: "prernamalhotra846@gmail.com",
+    password: "Sansupre@1",
+  };
+
+  const user = new User(userObj);
+
+  try {
+    await user.save();
+    res.send("user added successfully");
+  } catch (err) {
+    res.status(400).send("Error Saving the user:" + err.message);
+  }
 });
 
-app.post("/user", (req, res) => {
-  res.send("Post API call");
-});
-
-app.delete("/user", (req, res) => {
-  res.send("Delete API call");
-});
-
-app.use("/", (req, res) => {
-  res.send("Default address");
-});
-
-app.listen(3000, () => {
-  console.log("Server is listening successfully on the port 3000...");
-});
+connectDB()
+  .then(() => {
+    console.log("Database connection established");
+    app.listen(3000, () => {
+      console.log("Server is listening successfully on the port 3000...");
+    });
+  })
+  .catch((err) => {
+    console.error("Database cannot be connected");
+  });
