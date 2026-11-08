@@ -18,6 +18,7 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+//get user by email
 app.get("/user", async (req, res) => {
   try {
     const userEmail = req.body.email;
@@ -32,6 +33,7 @@ app.get("/user", async (req, res) => {
   }
 });
 
+//Feed API - get all users from the database
 app.get("/feed", async (req, res) => {
   try {
     const users = await User.find({});
@@ -40,6 +42,30 @@ app.get("/feed", async (req, res) => {
     res.status(400).send("something went wrong");
   }
 });
+
+//Delete a user from the database
+app.delete("/user", async (req, res) => {
+  const userId = req.body.userId;
+  try {
+    const user = await User.findByIdAndDelete(userId);
+    res.send("User deleted successfully");
+  } catch (err) {
+    res.status(400).send("something went wrong");
+  }
+});
+
+//update data of the user
+app.patch("/user", async (req, res) => {
+  const userId = req.body.userId;
+  const data = req.body;
+  res.send("User updated successfully");
+  try {
+    await User.findByIdAndUpdate({ _id: userId }, data);
+  } catch (err) {
+    res.status(400).send("Something went wrong");
+  }
+});
+
 connectDB()
   .then(() => {
     console.log("Database connection established");
